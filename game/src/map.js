@@ -177,7 +177,8 @@ export function createMap(scene) {
   }
 
   // Light: dusk hemisphere, warm key from the south-east, cool fill, kiln glow.
-  const sky = new THREE.HemisphereLight(new THREE.Color('#5a6a72'), new THREE.Color(PALETTE.canvas), 0.9);
+  // Kept bright enough that lanes and the Kiln read clearly on first sight.
+  const sky = new THREE.HemisphereLight(new THREE.Color('#5a6a72'), new THREE.Color(PALETTE.canvas), 1.5);
   scene.add(sky);
   const key = new THREE.DirectionalLight(new THREE.Color('#ffd9a0'), 2.0);
   key.position.set(12, 16, 12);
@@ -191,10 +192,10 @@ export function createMap(scene) {
   key.shadow.camera.far = 60;
   key.shadow.bias = -0.0006;
   scene.add(key, key.target);
-  const fill = new THREE.DirectionalLight(new THREE.Color(PALETTE.muted), 0.5);
+  const fill = new THREE.DirectionalLight(new THREE.Color(PALETTE.muted), 0.9);
   fill.position.set(-10, 10, -12);
   scene.add(fill);
-  const kilnLight = new THREE.PointLight(new THREE.Color(PALETTE.accent), 26, 18, 1.6);
+  const kilnLight = new THREE.PointLight(new THREE.Color(PALETTE.accent), 42, 18, 1.6);
   kilnLight.position.set(0, 3.2, -11.5);
   scene.add(kilnLight);
 

@@ -31,13 +31,13 @@ function mulberry32(initial) {
 }
 const rand = shot ? mulberry32(seed) : Math.random;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMappingExposure = 1.3;
 document.getElementById('game').appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -578,6 +578,9 @@ function runShot(name) {
   }
   syncCamera();
   syncHud();
+  // The round-start banner lingers behind the shot overlays; hide it so the
+  // capture shows only the intended frame.
+  hud.hideBanner();
   paintTwiceThenReady();
 }
 

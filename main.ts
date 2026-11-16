@@ -12,7 +12,7 @@
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-threejs.ts';
@@ -24,6 +24,16 @@ mkdirSync(out, { recursive: true });
 cpSync(join(here, 'game'), join(out, 'game'), { recursive: true });
 mkdirSync(join(out, 'screenshots'), { recursive: true });
 if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
+
+// Screenshots ship in the repo as base64 text (*.jpg.b64): the snapshot transport
+// that publishes the repo rejects binary files, so the images travel as text and are
+// decoded back into real JPEGs here, before the dossier is built from /output.
+for (const name of readdirSync(join(out, 'screenshots'))) {
+  if (!name.endsWith('.b64')) continue;
+  const b64 = readFileSync(join(out, 'screenshots', name), 'utf8').replace(/\s+/g, '');
+  writeFileSync(join(out, 'screenshots', name.slice(0, -4)), Buffer.from(b64, 'base64'));
+  rmSync(join(out, 'screenshots', name));
+}
 
 // The scorer's own caps (reference/gate.json): only text_max_bytes shapes the bytes; the others refuse an entry the
 // scorer would refuse (more than 4 screenshots or one over 256 KiB; more than 993 files in game/ or 48 MiB of game
